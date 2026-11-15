@@ -1,25 +1,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  BrowserRouter,
-  Link,
-  NavLink,
-  Route,
-  Routes,
-  useLocation,
+  BrowserRouter, Link, NavLink, Route, Routes, useLocation,
 } from "react-router-dom";
 import {
-  ArrowRight,
+   ArrowRight,
   ArrowUpRight,
   ChefHat,
-  Clock3,
-  
   Heart,
-  
-  Leaf,
   Menu as MenuIcon,
   MessageCircle,
-  Phone,
   Search,
   Star,
   X,
@@ -27,99 +17,137 @@ import {
 import * as menuData from "./data/menu";
 import "./App.css";
 
+const PHONE = "917407224410";
+const REVIEW = "https://maps.app.goo.gl/CF5BEdBvNj9ULXHY6?g_st=aw";
+const FACEBOOK = "https://www.facebook.com/profile.php?id=61591407665103";
+const INSTAGRAM = "https://www.instagram.com/bandanaskitchen?igsh=MWV1Nms1b285bnRwNw==";
+const ARTWORK = "https://notsomighty.vercel.app/";
+
 const menuItems = menuData.menuItems ?? [];
-const categories = menuData.categories ?? [];
 const categoryLabels = menuData.categoryLabels ?? {};
 
-const contacts = [
-  { number: "917407224410", label: "74072 24410" },
-  { number: "918240351593", label: "82403 51593" },
+const foodPhotos = [
+  { name: "Prawn Special", image: "prawn.jpg" },
+  { name: "Mutton Special", image: "mutton.jpg" },
+  { name: "Rui Chop", image: "rui_chop.jpg" },
+  { name: "Chilli Chicken", image: "chilichicken.jpg" },
+  { name: "Potoler Dolma", image: "potoler_dolma.jpg" },
+  { name: "Fish Rezala", image: "fish_rezala.jpg" },
+  { name: "Egg Devil", image: "egg_davil.jpg" },
+  { name: "Doi Chicken", image: "doi_chicken.jpg" },
 ];
 
-const reviewUrl =
-  menuData.googleReviewLink ||
-  "https://maps.app.goo.gl/CF5BEdBvNj9ULXHY6?g_st=aw";
-
-const facebookUrl =
-  "https://www.facebook.com/profile.php?id=61591407665103";
-
-const instagramUrl =
-  "https://www.instagram.com/bandanaskitchen?igsh=MWV1Nms1b285bnRwNw==";
-
-const notSoMightyUrl = "https://notsomighty.vercel.app/";
-
-const featuredDishes = [
+const thalis = [
   {
-    name: "Chingrir Malaikari",
-    subtitle: "A Bengali favourite",
-    image: "/images/prawn.jpg",
+    name: "Veg Thali",
+    price: 130,
+    type: "Vegetarian",
+    contents: [
+      "Rice", "Dal", "Sabji 1 (Chhanar Kofta / Sukto)",
+      "Sabji 2", "Bhaja", "Doi / Chutney",
+    ],
   },
   {
-    name: "Kosha Mangso",
-    subtitle: "Slow-cooked comfort",
-    image: "/images/mutton.jpg",
+    name: "Rui Thali",
+    price: 150,
+    type: "Fish",
+    contents: [
+      "Rice", "Dal", "Sabji 1", "Bhaja",
+      "Rui Kaliya (100 g)", "Doi / Chutney",
+    ],
   },
   {
-    name: "Rui Fish Chop",
-    subtitle: "A homemade special",
-    image: "/images/rui_chop.jpg",
+    name: "Katla Thali",
+    price: 160,
+    type: "Fish",
+    contents: [
+      "Rice", "Dal", "Sabji 1", "Bhaja",
+      "Katla Kaliya (100 g)", "Doi / Chutney",
+    ],
   },
   {
-    name: "Chilli Chicken",
-    subtitle: "A little something spicy",
-    image: "/images/chilichicken.jpg",
+    name: "Egg Thali",
+    price: 120,
+    type: "Egg",
+    contents: [
+      "Rice", "Dal", "Sabji 1", "Bhaja",
+      "Egg Curry (2 pieces)", "Doi / Chutney",
+    ],
+  },
+  {
+    name: "Chicken Thali",
+    price: 150,
+    type: "Chicken",
+    contents: [
+      "Rice", "Dal", "Sabji 1", "Bhaja",
+      "Chicken Kosha (2 pieces)", "Doi / Chutney",
+    ],
   },
 ];
 
-function whatsappLink(number, message = "") {
-  const query = message
-    ? `?text=${encodeURIComponent(message)}`
-    : "";
+const combos = [
+  {
+    name: "Classic Chicken Kosha Combo",
+    price: 350,
+    label: "A festive favourite",
+    contents: [
+      "Egg Devil", "Basanti Pulao", "Chicken Kosha",
+      "Kheer", "Mouth Freshener",
+    ],
+  },
+  {
+    name: "Gondhoraj Chicken Combo",
+    price: 299,
+    label: "A fragrant Bengali feast",
+    contents: [
+      "Egg Devil", "Basanti Pulao", "Gondhoraj Chicken",
+      "Sweet", "Mouth Freshener",
+    ],
+  },
+  {
+    name: "Mutton Gorgora Special Combo",
+    price: 550,
+    label: "Something extra special",
+    contents: [
+      "Choose one starter: Rui Chop / Kada Chingri Bora / Egg Devil",
+      "Choose one: Steamed Basmati Rice / Afghani Chicken Pulao",
+      "Mutton Gorgora", "Chutney", "Sweet",
+    ],
+  },
+];
 
-  return `https://wa.me/${number}${query}`;
+function wa(message = "") {
+  return `https://wa.me/${PHONE}${message ? `?text=${encodeURIComponent(message)}` : ""}`;
 }
 
-function dishOrderLink(item, number) {
-  const message =
-    `Hello Bandana's Kitchen! I'd like to order ` +
-    `${item.name}${item.quantity ? ` (${item.quantity})` : ""}. ` +
-    `Please confirm availability and total price.`;
-
-  return whatsappLink(number, message);
-}
-
-function getCategoryName(category) {
-  if (typeof category === "object" && category !== null) {
-    category = category.id ?? category.name ?? category.label;
-  }
-
-  return categoryLabels[category] || category || "Our Kitchen";
+function OrderButton({ name, className = "" }) {
+  return (
+    <a
+      className={`order-button ${className}`}
+      href={wa(`Hello Bandana's Kitchen! I'd like to order ${name}. Please confirm availability and the total.`)}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <MessageCircle size={17} />
+      Order on WhatsApp
+      <ArrowUpRight size={16} />
+    </a>
+  );
 }
 
 function ScrollToTop() {
   const { pathname } = useLocation();
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-
   return null;
 }
 
 function Brand() {
   return (
-    <Link
-      to="/"
-      className="brand"
-      aria-label="Bandana's Kitchen home"
-    >
-      <img
-        src="/images/favicon.png"
-        alt=""
-        className="brand-logo"
-      />
-
-      <span className="brand-words">
+    <Link to="/" className="brand">
+      <img src="/images/favicon.png" alt="" />
+      <span>
         <strong>Bandana's</strong>
         <small>KITCHEN</small>
       </span>
@@ -127,195 +155,167 @@ function Brand() {
   );
 }
 
+
+const links = [
+  { to: "/", label: "Home" },
+  { to: "/menu", label: "Menu" },
+  { to: "/thalis", label: "Thalis" },
+  { to: "/combos", label: "Combos" },
+  { to: "/cakes-cookies", label: "Cakes & Cookies" },
+  { to: "/about", label: "Our Story" },
+  { to: "/contact", label: "Contact" },
+];
+
+
 function Header() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
 
   useEffect(() => {
-    setMenuOpen(false);
+    setOpen(false);
   }, [pathname]);
-
-  useEffect(() => {
-    document.body.classList.toggle("nav-locked", menuOpen);
-
-    return () => {
-      document.body.classList.remove("nav-locked");
-    };
-  }, [menuOpen]);
-
-  const navigation = [
-    { to: "/", text: "Home" },
-    { to: "/menu", text: "Menu" },
-    { to: "/about", text: "Our Story" },
-    { to: "/contact", text: "Contact" },
-  ];
 
   return (
     <header className="site-header">
       <div className="announcement">
-        <span>✳</span>
-        EVERY MEAL, A MEMORY OF HOME
-        <span>✳</span>
+        ✳ EVERY MEAL, A MEMORY OF HOME ✳
       </div>
-
-      <div className="header-main">
-        <nav className="container navigation">
-          <Brand />
-
-          <div className="desktop-navigation">
-            {navigation.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.to === "/"}
-              >
-                {item.text}
-              </NavLink>
-            ))}
-
-            <Link to="/menu" className="header-order">
-              Order Now
-              <ArrowUpRight size={17} />
-            </Link>
-          </div>
-
-          <button
-            type="button"
-            className="hamburger"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-navigation"
-            onClick={() => setMenuOpen((value) => !value)}
-          >
-            {menuOpen ? (
-              <X size={27} />
-            ) : (
-              <MenuIcon size={27} />
-            )}
-          </button>
-        </nav>
-      </div>
-
-      <div
-        id="mobile-navigation"
-        className={`mobile-navigation ${
-          menuOpen ? "is-open" : ""
-        }`}
-        aria-hidden={!menuOpen}
-      >
-        <div className="mobile-navigation-inner container">
-          <span className="eyebrow">EXPLORE OUR KITCHEN</span>
-
-          {navigation.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.to === "/"}
-              tabIndex={menuOpen ? 0 : -1}
-              onClick={() => setMenuOpen(false)}
-            >
-              {item.text}
-              <ArrowUpRight size={22} />
+      <div className="container header-inner">
+        <Brand />
+        <nav className="desktop-nav" aria-label="Main navigation">
+          {links.map((link) => (
+            <NavLink key={link.to} to={link.to} end={link.to === "/"}>
+              {link.label}
             </NavLink>
           ))}
-
-          <div className="mobile-navigation-tagline">
-            <span lang="bn">
-              ঘরের রান্না, ভালোবাসার ছোঁয়া
-            </span>
-            <small>
-              Home-cooked food, touched with love.
-            </small>
-          </div>
-        </div>
+        </nav>
+        <a className="header-order" href={wa()} target="_blank" rel="noreferrer">
+          Order Now <ArrowUpRight size={16} />
+        </a>
+        <button
+          className="menu-toggle"
+          aria-label={open ? "Close navigation" : "Open navigation"}
+          aria-expanded={open}
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <X /> : <MenuIcon />}
+        </button>
       </div>
+      {open && (
+        <nav className="mobile-nav" aria-label="Mobile navigation">
+          {links.map((link) => (
+            <NavLink key={link.to} to={link.to} onClick={() => setOpen(false)}>
+              {link.label} <ArrowUpRight size={18} />
+            </NavLink>
+          ))}
+        </nav>
+      )}
     </header>
   );
 }
 
-function SectionHeading({
-  eyebrow,
-  title,
-  italic,
-  description,
-  centered = false,
-}) {
+function SectionTitle({ eyebrow, first, accent, description }) {
   return (
-    <div
-      className={`section-heading ${
-        centered ? "centered" : ""
-      }`}
-    >
+    <div className="section-title">
       <span className="eyebrow">{eyebrow}</span>
-
-      <h2>
-        {title} <em>{italic}</em>
-      </h2>
-
+      <h2>{first} <em>{accent}</em></h2>
       {description && <p>{description}</p>}
     </div>
   );
 }
 
-function Hero() {
+function HomeHero() {
   return (
     <section className="home-hero">
-      <div className="container hero-layout">
-        <div className="hero-content">
-          <span className="eyebrow">
-            A LITTLE KITCHEN. A LOT OF LOVE.
-          </span>
-
-          <h1>
-            A taste of
-            <br />
-            <em>home,</em>
-            <br />
-            in every bite.
-          </h1>
-
-          <p className="hero-description">
-            Familiar Bengali flavours, thoughtful cooking,
-            and the warmth of a homemade meal.
-            Because the best food always feels like home.
+      <div className="container hero-grid">
+        <div className="hero-copy">
+          <span className="eyebrow">A LITTLE KITCHEN. A LOT OF LOVE.</span>
+          <h1>A taste of <em>home,</em> in every bite.</h1>
+          <p>
+            Authentic homemade Bengali flavours, comforting favourites,
+            and the warmth of a meal made with love.
           </p>
-
-          <div className="hero-buttons">
-            <Link to="/menu" className="btn btn-primary">
-              Explore the Menu
-              <ArrowUpRight size={18} />
+          <div className="hero-actions">
+            <Link className="btn btn-dark" to="/menu">
+              Explore the Menu <ArrowUpRight size={18} />
             </Link>
-
-            <a
-              className="hero-whatsapp"
-              href={whatsappLink(contacts[0].number)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <MessageCircle size={18} />
-              Order on WhatsApp
-            </a>
+            <Link className="text-link" to="/thalis">
+              Discover Our Thalis <ArrowRight size={17} />
+            </Link>
           </div>
-
-          <div className="hero-bengali">
-            <span lang="bn">
-              ঘরের রান্না, ভালোবাসার ছোঁয়া
-            </span>
-            <small>
-              Home-cooked food, touched with love.
-            </small>
+          <div className="bengali-line">
+            <span lang="bn">ঘরের রান্না, ভালোবাসার ছোঁয়া</span>
+            <small>Home-cooked food, touched with love.</small>
           </div>
         </div>
+        <div className="hero-artwork">
+          <img src="/images/hero.jpg" alt="Bandana's Kitchen original artwork" />
+        </div>
+      </div>
+    </section>
+  );
+}
 
-        {/* One original artwork, on desktop and mobile */}
-        <div className="hero-artwork hero-artwork-bounce">
-          <div className="hero-artwork-frame">
-            <img
-              src="/images/hero.jpg"
-              alt="Original Bandana's Kitchen artwork"
-              fetchPriority="high"
-            />
-          </div>
+function ExploreWays() {
+  const options = [
+    {
+      number: "01",
+      eyebrow: "YOUR EVERYDAY CRAVINGS",
+      name: "À La Carte",
+      text: "Explore the full kitchen menu, from comforting classics to Bengali favourites.",
+      to: "/menu",
+      cta: "View Menu",
+      className: "explore-menu",
+      symbol: "✳",
+    },
+    {
+      number: "02",
+      eyebrow: "A COMPLETE HOMEMADE MEAL",
+      name: "Bengali Thalis",
+      text: "Rice, dal, sides and a delicious main, all together on one plate.",
+      to: "/thalis",
+      cta: "Explore Thalis",
+      className: "explore-thali",
+      symbol: "✿",
+    },
+    {
+      number: "03",
+      eyebrow: "MORE TO CELEBRATE",
+      name: "Special Combos",
+      text: "Thoughtfully paired dishes for celebrations and special meals.",
+      to: "/combos",
+      cta: "See Combos",
+      className: "explore-combo",
+      symbol: "❋",
+    },
+  ];
+
+  return (
+    <section className="explore-section">
+      <div className="container">
+        <SectionTitle
+          eyebrow="WHAT ARE YOU CRAVING?"
+          first="Find your kind of"
+          accent="comfort."
+          description="Three delicious ways to enjoy Bandana's Kitchen."
+        />
+        <div className="explore-grid">
+          {options.map((option) => (
+            <Link to={option.to} className={`explore-card ${option.className}`} key={option.to}>
+              <div className="explore-card-top">
+                <span>{option.number} / 03</span>
+                <span className="explore-symbol">{option.symbol}</span>
+              </div>
+              <div>
+                <span className="explore-eyebrow">{option.eyebrow}</span>
+                <h3>{option.name}</h3>
+                <p>{option.text}</p>
+                <span className="explore-cta">
+                  {option.cta} <ArrowUpRight size={18} />
+                </span>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
@@ -326,62 +326,68 @@ function FeaturedFood() {
   return (
     <section className="featured-section">
       <div className="container">
-        <div className="featured-heading-row">
-          <SectionHeading
-            eyebrow="FRESH FROM OUR KITCHEN"
-            title="A few things we"
-            italic="love making."
-            description="Familiar flavours, comforting favourites, and food worth sharing."
-          />
-
-          <Link to="/menu" className="underlined-link">
-            Explore Full Menu
-            <ArrowUpRight size={17} />
+        <div className="featured-top">
+          <SectionTitle
+          eyebrow="FRESH FROM OUR KITCHEN"
+          first="A little taste of"
+          accent="home."
+          description="Familiar Bengali flavours, cherished recipes, and the comfort of something homemade."
+        />
+          <Link className="text-link" to="/menu">
+            Full Menu <ArrowUpRight size={18} />
           </Link>
         </div>
-
-        <div className="featured-grid">
-          {featuredDishes.map((dish) => (
-            <article
-              className="featured-card"
-              key={dish.image}
-            >
-              <Link
-                to="/menu"
-                className="featured-image"
-                aria-label={`Explore ${dish.name} on our menu`}
-              >
-                <img
-                  src={dish.image}
-                  alt={dish.name}
-                  loading="lazy"
-                />
-              </Link>
-
-              <div className="featured-card-content">
-                <span className="featured-subtitle">
-                  {dish.subtitle}
-                </span>
-
-                <h3>{dish.name}</h3>
-
-                <Link
-                  to="/menu"
-                  className="featured-card-link"
-                >
-                  View Menu
-                  <ArrowUpRight size={16} />
-                </Link>
+        <div className="food-grid">
+          {foodPhotos.map((food) => (
+            <Link to="/menu" className="food-card" key={food.image}>
+              <div className="food-photo">
+                <img src={`/images/${food.image}`} alt={food.name} loading="lazy" />
               </div>
-            </article>
+              <div className="food-card-bottom">
+                <h3>{food.name}</h3>
+                <span><ArrowUpRight size={18} /></span>
+              </div>
+            </Link>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <div className="featured-mobile-action">
-          <Link to="/menu" className="btn btn-primary">
-            See All Our Dishes
-            <ArrowRight size={18} />
-          </Link>
+function HomeThaliSpotlight() {
+  return (
+    <section className="spotlight-section">
+      <div className="container spotlight-grid">
+        <div className="spotlight-copy">
+          <span className="eyebrow">THE COMFORT OF A COMPLETE MEAL</span>
+          <h2>One plate. <em>So much love.</em></h2>
+          <p>
+            Discover our Bengali thalis, thoughtfully put together
+            for the comfort of a home-cooked lunch or dinner.
+          </p>
+          <div className="thali-offer">
+  <div className="thali-offer-price">
+    <span>STARTING AT</span>
+    <strong>₹120</strong>
+  </div>
+
+  <div className="thali-offer-info">
+    <strong>Homemade Bengali Thalis</strong>
+    <span>Five comforting choices</span>
+  </div>
+</div>
+
+<Link className="btn btn-dark spotlight-btn" to="/thalis">
+  See All Thalis <ArrowRight size={18} />
+</Link>
+        </div>
+        <div className="spotlight-art">
+          <div className="spotlight-circle">
+            <span>ঘরের রান্না</span>
+            <strong>THE THALI<br />CLUB</strong>
+            <small>MADE WITH LOVE ✳</small>
+          </div>
         </div>
       </div>
     </section>
@@ -390,97 +396,25 @@ function FeaturedFood() {
 
 function MeetBandana() {
   return (
-    <section className="meet-bandana">
-      <div className="container meet-bandana-layout">
-        <div className="meet-bandana-image">
-          <img
-            src="/images/mother.jpg"
-            alt="Bandana, the heart behind Bandana's Kitchen"
-            loading="lazy"
-          />
+    <section className="meet-section">
+      <div className="container meet-grid">
+        <div className="meet-photo">
+          <img src="/images/mother.jpg" alt="Bandana, the heart behind Bandana's Kitchen" loading="lazy" />
         </div>
-
-        <div className="meet-bandana-content">
-          <span className="eyebrow">
-            THE HEART BEHIND THE FOOD
-          </span>
-
-          <h2>
-            Meet <em>Bandana.</em>
-          </h2>
-
+        <div className="meet-copy">
+          <span className="eyebrow">THE HEART BEHIND THE KITCHEN</span>
+          <h2>Meet <em>Bandana.</em></h2>
           <p>
-            Behind Bandana's Kitchen is a love for
-            the kind of food that brings everyone together.
+            Some meals remind us of family, familiar conversations,
+            and the simple happiness of eating together.
           </p>
-
           <p>
-            From comforting Bengali favourites to dishes
-            made for special occasions, every order carries
-            a little of the warmth of home.
+            That's the feeling Bandana's Kitchen hopes to bring
+            to your table, one homemade meal at a time.
           </p>
-
-          <div className="meet-bandana-quote">
-            <span lang="bn">মায়ের হাতের রান্না</span>
-            <small>Food made with a mother's love.</small>
-          </div>
-
-          <Link to="/about" className="btn btn-primary">
-            Read Our Story
-            <ArrowUpRight size={18} />
+          <Link className="btn btn-dark" to="/about">
+            Our Story <ArrowUpRight size={18} />
           </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function KitchenPromises() {
-  const promises = [
-    {
-      icon: Heart,
-      title: "Made with care",
-      description:
-        "Thoughtfully prepared food with a personal touch.",
-    },
-    {
-      icon: Leaf,
-      title: "Familiar flavours",
-      description:
-        "Comforting favourites inspired by home cooking.",
-    },
-    {
-      icon: ChefHat,
-      title: "From our kitchen",
-      description:
-        "Homestyle dishes for everyday meals and celebrations.",
-    },
-  ];
-
-  return (
-    <section className="promises-section">
-      <div className="container">
-        <SectionHeading
-          centered
-          eyebrow="WHY OUR KITCHEN IS SPECIAL"
-          title="The little things"
-          italic="matter."
-          description="Because a memorable meal is about more than what's on the plate."
-        />
-
-        <div className="promises-grid">
-          {promises.map(
-            ({ icon: Icon, title, description }) => (
-              <article
-                className="promise-card"
-                key={title}
-              >
-                <Icon size={30} strokeWidth={1.6} />
-                <h3>{title}</h3>
-                <p>{description}</p>
-              </article>
-            )
-          )}
         </div>
       </div>
     </section>
@@ -489,319 +423,267 @@ function KitchenPromises() {
 
 function ReviewSection() {
   return (
-    <section className="review-section">
-      <div className="container review-layout">
-        <div className="review-content">
-          <span className="eyebrow">
-            YOUR WORDS MEAN EVERYTHING
-          </span>
-
-          <div className="review-stars" aria-hidden="true">
-            {[1, 2, 3, 4, 5].map((number) => (
-              <Star key={number} size={20} />
-            ))}
-          </div>
-
-          <h2>
-            Good food.
-            <br />
-            <em>Kind words.</em>
-          </h2>
-
-          <p>
-            Enjoyed your meal? Share your experience.
-            Every genuine review helps our little kitchen grow.
-          </p>
-
-          <a
-            href={reviewUrl}
-            className="btn btn-primary"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Star size={18} />
-            Write a Google Review
-            <ArrowUpRight size={18} />
-          </a>
+    <section className="reviews-section">
+      <div className="container reviews-inner">
+        <div>
+          <span className="eyebrow">YOUR WORDS MATTER</span>
+          <h2>Good food. <em>Kind words.</em></h2>
+          <p>Enjoyed your meal? Share your experience and help our little kitchen grow.</p>
         </div>
-
-        <div className="review-note">
-          <span className="review-note-top">
-            A NOTE FROM OUR KITCHEN
-          </span>
-
-          <span className="review-note-star">✳</span>
-
-          <p>
-            Your love
-            <br />
-            is our <em>secret</em>
-            <br />
-            ingredient.
-          </p>
-
-          <span className="review-note-bottom">
-            WITH LOVE, BANDANA'S KITCHEN
-          </span>
-        </div>
+        <a className="btn btn-dark" href={REVIEW} target="_blank" rel="noreferrer">
+          <Star size={18} /> Review Us on Google <ArrowUpRight size={17} />
+        </a>
       </div>
     </section>
   );
 }
 
-function BottomCallToAction() {
-  return (
-    <section className="bottom-cta">
-      <div className="container">
-        <span className="eyebrow">
-          GOOD FOOD IS JUST A MESSAGE AWAY
-        </span>
-
-        <h2>
-          Something delicious <em>is waiting.</em>
-        </h2>
-
-        <p>
-          Explore our menu and find something that
-          feels like home.
-        </p>
-
-        <Link to="/menu" className="btn btn-light">
-          Browse Our Menu
-          <ArrowRight size={18} />
-        </Link>
-      </div>
-    </section>
-  );
-}
-
-function HomePage() {
-  return (
-    <main>
-      <Hero />
-      <FeaturedFood />
-      <MeetBandana />
-      <KitchenPromises />
-      <ReviewSection />
-      <BottomCallToAction />
-    </main>
-  );
-}
-
-function PageHero({
-  eyebrow,
-  title,
-  italic,
-  description,
-}) {
+function PageHero({ eyebrow, title, accent, description }) {
   return (
     <section className="page-hero">
       <div className="container">
         <span className="eyebrow">{eyebrow}</span>
-
-        <h1>
-          {title} <em>{italic}</em>
-        </h1>
-
+        <h1>{title} <em>{accent}</em></h1>
         <p>{description}</p>
       </div>
     </section>
   );
 }
 
-function DishCard({ item }) {
-  return (
-    <article className="dish-card">
-      <div className="dish-category">
-        <span>{getCategoryName(item.category)}</span>
-        <span>✳</span>
-      </div>
-
-      <h3>{item.name}</h3>
-
-      <div className="dish-info">
-        <span>
-          {item.quantity || "Confirm portion"}
-        </span>
-
-        <strong>
-          {item.price === null ||
-          item.price === undefined ||
-          item.price === ""
-            ? "Ask price"
-            : `₹${item.price}`}
-        </strong>
-      </div>
-
-      <div className="dish-order-actions">
-        {contacts.map((contact, index) => (
-          <a
-            key={contact.number}
-            href={dishOrderLink(item, contact.number)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`dish-order-button ${
-              index === 1 ? "secondary" : ""
-            }`}
-          >
-            <MessageCircle size={16} />
-            Order {index + 1}
-            <ArrowUpRight size={15} />
-          </a>
-        ))}
-      </div>
-    </article>
-  );
-}
-
 function MenuPage() {
-  const [search, setSearch] = useState("");
-  const [activeCategory, setActiveCategory] =
-    useState("All");
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("All");
 
-  const categoryNames = useMemo(() => {
-    const suppliedCategories = Array.isArray(categories)
-      ? categories.map((category) => {
-          if (typeof category === "string") {
-            return category;
-          }
-
-          return (
-            category.id ??
-            category.name ??
-            category.label ??
-            ""
-          );
-        })
-      : [];
-
-    return [
-      ...new Set([
-        ...suppliedCategories,
-        ...menuItems.map((item) => item.category),
-      ]),
-    ].filter(
-      (category) => category && category !== "All"
-    );
+  const groups = useMemo(() => {
+    const result = new Map();
+    menuItems.forEach((item) => {
+      const key = item.category || "Other";
+      if (!result.has(key)) result.set(key, []);
+      result.get(key).push(item);
+    });
+    return result;
   }, []);
 
-  const filteredItems = useMemo(() => {
-    const query = search.trim().toLowerCase();
+  const categories = ["All", ...groups.keys()];
 
-    return menuItems.filter((item) => {
-      const matchesCategory =
-        activeCategory === "All" ||
-        item.category === activeCategory;
-
-      const searchableText =
-        `${item.name ?? ""} ${item.category ?? ""}`.toLowerCase();
-
-      return (
-        matchesCategory &&
-        (!query || searchableText.includes(query))
-      );
-    });
-  }, [search, activeCategory]);
+  const visibleGroups = [...groups.entries()]
+    .filter(([key]) => category === "All" || key === category)
+    .map(([key, items]) => [
+      key,
+      items.filter((item) =>
+        `${item.name} ${key}`.toLowerCase().includes(query.toLowerCase())
+      ),
+    ])
+    .filter(([, items]) => items.length > 0);
 
   return (
     <main>
       <PageHero
-        eyebrow="THE BANDANA'S KITCHEN MENU"
+        eyebrow="THE COMPLETE KITCHEN MENU"
         title="Made for your"
-        italic="cravings."
-        description="Explore our homemade favourites and order directly through WhatsApp."
+        accent="cravings."
+        description="Explore homemade favourites, find your dish, and order directly on WhatsApp."
       />
-
-      <section className="menu-section container">
+      <div className="container menu-layout">
         <div className="menu-toolbar">
-          <label className="menu-search">
-            <Search size={20} />
-
+          <label className="search-field">
+            <Search size={19} />
             <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="What are you craving?"
               type="search"
-              placeholder="Search for a dish..."
-              value={search}
-              onChange={(event) =>
-                setSearch(event.target.value)
-              }
             />
           </label>
-
-          <span className="menu-count">
-            {filteredItems.length} dishes
-          </span>
-        </div>
-
-        <div className="category-scroll">
-          <div className="category-chips">
-            <button
-              type="button"
-              className={`category-chip ${
-                activeCategory === "All" ? "active" : ""
-              }`}
-              onClick={() => setActiveCategory("All")}
-            >
-              All dishes
-            </button>
-
-            {categoryNames.map((category) => (
+          <div className="category-tabs">
+            {categories.map((key) => (
               <button
                 type="button"
-                key={category}
-                className={`category-chip ${
-                  activeCategory === category
-                    ? "active"
-                    : ""
-                }`}
-                onClick={() =>
-                  setActiveCategory(category)
-                }
+                key={key}
+                className={category === key ? "selected" : ""}
+                onClick={() => setCategory(key)}
               >
-                {getCategoryName(category)}
+                {key === "All" ? "All Dishes" : categoryLabels[key] || key}
               </button>
             ))}
           </div>
         </div>
 
-        {filteredItems.length > 0 ? (
-          <div className="dish-grid">
-            {filteredItems.map((item, index) => (
-              <DishCard
-                key={item.id ?? `${item.name}-${index}`}
-                item={item}
-              />
-            ))}
-          </div>
+        {visibleGroups.length ? (
+          visibleGroups.map(([key, items], groupIndex) => (
+            <section className="menu-group" key={key}>
+              <div className="menu-group-heading">
+                <div>
+                  <span className="eyebrow">FROM OUR KITCHEN · {String(groupIndex + 1).padStart(2, "0")}</span>
+                  <h2>{categoryLabels[key] || key}</h2>
+                </div>
+                <span>{items.length} dishes</span>
+              </div>
+              <div className="menu-items-grid">
+                {items.map((item, index) => (
+                  <article className="menu-dish" key={item.id ?? `${key}-${item.name}-${index}`}>
+                    <div className="menu-dish-main">
+                      <h3>{item.name}</h3>
+                      {item.quantity && <p>{item.quantity}</p>}
+                    </div>
+                    <div className="menu-dish-bottom">
+                      <strong>
+                        {item.price !== undefined && item.price !== null && item.price !== ""
+                          ? `₹${item.price}`
+                          : "Ask for price"}
+                      </strong>
+                      <OrderButton name={item.name} />
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ))
         ) : (
-          <div className="empty-menu">
+          <div className="empty-state">
             <h2>No dishes found</h2>
             <p>Try another search or category.</p>
-
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => {
-                setSearch("");
-                setActiveCategory("All");
-              }}
-            >
+            <button onClick={() => { setQuery(""); setCategory("All"); }}>
               Show All Dishes
             </button>
           </div>
         )}
+        <div className="menu-end-note">
+          Looking for a complete meal or a special spread?
+          <Link to="/thalis">Explore Thalis <ArrowRight size={16} /></Link>
+          <Link to="/combos">Explore Combos <ArrowRight size={16} /></Link>
+        </div>
+      </div>
+    </main>
+  );
+}
 
-        <div className="menu-notice">
-          <Clock3 size={23} />
+function ThaliPage() {
+  return (
+    <main>
+      <PageHero
+        eyebrow="HOMEMADE BENGALI THALIS"
+        title="The joy of a"
+        accent="complete meal."
+        description="A little bit of everything you love, thoughtfully brought together."
+      />
+      <section className="container listing-section">
+        <div className="listing-intro">
+          <span className="eyebrow">FIVE HOMESTYLE FAVOURITES</span>
+          <h2>Choose your <em>thali.</em></h2>
+          <p>Comforting rice, dal, sides, and a satisfying main.</p>
+        </div>
+        <div className="thali-grid">
+          {thalis.map((thali, index) => (
+            <article className="thali-card" key={thali.name}>
+              <div className="card-topline">
+                <span>THALI NO. {String(index + 1).padStart(2, "0")}</span>
+                <span className="type-pill">{thali.type}</span>
+              </div>
+              <div className="thali-title-row">
+                <h3>{thali.name}</h3>
+                <strong>₹{thali.price}</strong>
+              </div>
+              <div className="thali-divider" />
+              <p className="includes-label">WHAT'S ON YOUR PLATE</p>
+              <ul className="dish-contents">
+                {thali.contents.map((content) => <li key={content}>{content}</li>)}
+              </ul>
+              <OrderButton name={thali.name} />
+            </article>
+          ))}
+        </div>
+        <p className="order-note">
+          Please confirm availability, preparation time, and delivery charges before ordering.
+        </p>
+      </section>
+    </main>
+  );
+}
+
+function ComboPage() {
+  return (
+    <main>
+      <PageHero
+        eyebrow="SPECIAL MEALS, MADE WITH LOVE"
+        title="More flavours."
+        accent="More joy."
+        description="Thoughtfully paired Bengali favourites for when one dish simply isn't enough."
+      />
+      <section className="container listing-section">
+        <div className="listing-intro">
+          <span className="eyebrow">THREE DELICIOUS COMBINATIONS</span>
+          <h2>Our special <em>combos.</em></h2>
+          <p>Choose your favourite feast and order directly from our kitchen.</p>
+        </div>
+        <div className="combo-grid">
+          {combos.map((combo, index) => (
+            <article className="combo-card" key={combo.name}>
+              <div className="combo-topline">
+                <span>COMBO {String(index + 1).padStart(2, "0")}</span>
+                <span>✳</span>
+              </div>
+              <span className="combo-label">{combo.label}</span>
+              <h3>{combo.name}</h3>
+              <strong className="combo-price">₹{combo.price}</strong>
+              <div className="combo-rule" />
+              <p className="includes-label">INCLUDED IN YOUR COMBO</p>
+              <ul className="dish-contents">
+                {combo.contents.map((content) => <li key={content}>{content}</li>)}
+              </ul>
+              <OrderButton name={combo.name} />
+            </article>
+          ))}
+        </div>
+        <p className="order-note">
+          For the Mutton Gorgora combo, please mention your starter and rice/pulao choices when ordering.
+        </p>
+      </section>
+    </main>
+  );
+}
+
+
+function CakesCookiesPage() {
+  return (
+    <main className="cakes-page">
+      <section className="cakes-coming-soon">
+        <div className="container cakes-content">
+          <div className="cakes-decor cakes-decor-one">✳</div>
+          <div className="cakes-decor cakes-decor-two">✿</div>
+
+          <span className="eyebrow">
+            SOMETHING SWEET IS ON ITS WAY
+          </span>
+
+          <div className="cakes-icon">♡</div>
+
+          <h1>
+            Cakes <span>&</span> Cookies
+          </h1>
+
+          <div className="cakes-coming-badge">
+            COMING SOON
+          </div>
+
           <p>
-            Please confirm availability, portion size,
-            preparation time, and delivery charges
-            when ordering.
+            A little sweetness is baking behind the scenes.
+            Something delicious, homemade, and made with love
+            is coming to Bandana's Kitchen.
           </p>
+
+          <div className="cakes-bottom">
+            <span>Made with love. Worth the wait.</span>
+            <Link to="/" className="btn btn-dark">
+              Back to Home <ArrowRight size={18} />
+            </Link>
+          </div>
         </div>
       </section>
     </main>
   );
 }
+
 
 function AboutPage() {
   return (
@@ -809,75 +691,31 @@ function AboutPage() {
       <PageHero
         eyebrow="OUR STORY"
         title="A kitchen with"
-        italic="heart."
+        accent="heart."
         description="Every Meal, A Memory of Home."
       />
-
-      <section className="about-section container">
-        <div className="about-photo-wrap">
-          <div className="about-photo">
-            <img
-              src="/images/mother.jpg"
-              alt="Bandana, the heart behind Bandana's Kitchen"
-            />
-          </div>
-
-          <div className="about-photo-caption">
-            <span lang="bn">মায়ের হাতের রান্না</span>
-            <small>
-              THE HEART BEHIND BANDANA'S KITCHEN
-            </small>
-          </div>
+      <section className="container about-grid">
+        <div className="about-image">
+          <img src="/images/mother.jpg" alt="Bandana" />
         </div>
-
-        <div className="about-content">
-          <span className="eyebrow">
-            MORE THAN JUST A MEAL
-          </span>
-
-          <h2>
-            A little tradition.
-            <br />
-            <em>A lot of love.</em>
-          </h2>
-
+        <div className="about-copy">
+          <span className="eyebrow">THE STORY BEHIND THE FOOD</span>
+          <h2>Meet <em>Bandana.</em></h2>
           <p>
-            Welcome to Bandana's Kitchen, where
-            familiar recipes and the joy of home
-            cooking come together.
+            Bandana's Kitchen is rooted in the simple joy of home-cooked
+            Bengali food: comforting flavours, familiar recipes, and
+            meals made to be shared.
           </p>
-
           <p>
-            We believe the most memorable meals
-            are the ones that remind you of family,
-            celebrations, and everyday moments
-            worth sharing.
+            From everyday favourites to festive spreads, our kitchen
+            is all about bringing a little warmth to your table.
           </p>
-
-          <p>
-            That's the feeling we hope to bring
-            to your table, one thoughtfully prepared
-            dish at a time.
-          </p>
-
-          <div className="about-tagline">
-            <span lang="bn">
-              ঘরের রান্না, ভালোবাসার ছোঁয়া
-            </span>
-            <small>
-              Home-cooked food, touched with love.
-            </small>
-          </div>
-
-          <Link to="/menu" className="btn btn-primary">
-            Discover Our Menu
-            <ArrowUpRight size={18} />
+          <p className="bengali-quote" lang="bn">ঘরের রান্না, ভালোবাসার ছোঁয়া</p>
+          <Link className="btn btn-dark" to="/menu">
+            Explore Our Food <ArrowUpRight size={18} />
           </Link>
         </div>
       </section>
-
-      <ReviewSection />
-      <BottomCallToAction />
     </main>
   );
 }
@@ -888,77 +726,31 @@ function ContactPage() {
       <PageHero
         eyebrow="LET'S TALK FOOD"
         title="Say hello,"
-        italic="anytime."
-        description="Questions about an order or planning something special? We'd love to hear from you."
+        accent="anytime."
+        description="Ready to order? Have a question? We'd love to hear from you."
       />
-
-      <section className="contact-section container">
-        <div className="contact-grid">
-          <article className="contact-card">
-            <MessageCircle size={29} />
-            <h2>WhatsApp Orders</h2>
-            <p>Message our kitchen directly.</p>
-
-            {contacts.map((contact) => (
-              <a
-                key={contact.number}
-                href={whatsappLink(contact.number)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                +91 {contact.label}
-                <ArrowUpRight size={16} />
-              </a>
-            ))}
-          </article>
-
-          <article className="contact-card">
-            <Phone size={29} />
-            <h2>Call Us</h2>
-            <p>Have a question about your order?</p>
-
-            {contacts.map((contact) => (
-              <a
-                key={contact.number}
-                href={`tel:+${contact.number}`}
-              >
-                +91 {contact.label}
-                <ArrowUpRight size={16} />
-              </a>
-            ))}
-          </article>
-
-          <article className="contact-card">
-            <Heart size={29} />
-            <h2>Follow Our Kitchen</h2>
-            <p>
-              Stay connected for food updates and
-              little moments from our kitchen.
-            </p>
-
-            <a
-              href={facebookUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Facebook
-              <ArrowUpRight size={16} />
-            </a>
-
-            <a
-              href={instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Instagram
-              <ArrowUpRight size={16} />
-            </a>
-          </article>
+      <section className="container contact-section">
+        <div className="contact-feature">
+          <MessageCircle size={34} />
+          <h2>Order directly from our kitchen.</h2>
+          <p>WhatsApp us for orders, availability, and special occasions.</p>
+          <a className="btn btn-dark" href={wa()} target="_blank" rel="noreferrer">
+            WhatsApp 7407224410 <ArrowUpRight size={18} />
+          </a>
+        </div>
+        <div className="contact-social">
+          <h3>Follow our food journey</h3>
+          <a href={FACEBOOK} target="_blank" rel="noreferrer">
+            Facebook <ArrowUpRight size={17} />
+          </a>
+          <a href={INSTAGRAM} target="_blank" rel="noreferrer">
+            Instagram <ArrowUpRight size={17} />
+          </a>
+          <a href={REVIEW} target="_blank" rel="noreferrer">
+            Google Reviews <ArrowUpRight size={17} />
+          </a>
         </div>
       </section>
-
-      <ReviewSection />
-      <BottomCallToAction />
     </main>
   );
 }
@@ -970,101 +762,32 @@ function Footer() {
         <div className="footer-grid">
           <div className="footer-brand">
             <Brand />
-
             <p>Every Meal, A Memory of Home.</p>
-
-            <span lang="bn">
-              ঘরের রান্না, ভালোবাসার ছোঁয়া
-            </span>
-
-            <small>
-              Home-cooked food, touched with love.
-            </small>
+            <span lang="bn">ঘরের রান্না, ভালোবাসার ছোঁয়া</span>
           </div>
-
-          <div className="footer-column">
+          <div className="footer-links">
             <h3>Explore</h3>
-
-            <Link to="/">Home</Link>
-            <Link to="/menu">Our Menu</Link>
-            <Link to="/about">Our Story</Link>
-            <Link to="/contact">Contact</Link>
+            {links.map((link) => <Link key={link.to} to={link.to}>{link.label}</Link>)}
           </div>
-
-          <div className="footer-column">
+          <div className="footer-links">
             <h3>Let's Connect</h3>
-
-            {contacts.map((contact) => (
-              <a
-                key={contact.number}
-                href={whatsappLink(contact.number)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                +91 {contact.label}
-              </a>
-            ))}
-
-            <a
-              href={reviewUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Google Reviews
-              <ArrowUpRight size={14} />
-            </a>
-          </div>
-
-          <div className="footer-column">
-            <h3>Follow Along</h3>
-
-            <a
-              href={facebookUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Facebook
-              <ArrowUpRight size={14} />
-            </a>
-
-            <a
-              href={instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Instagram
-              <ArrowUpRight size={14} />
-            </a>
+            <a href={wa()} target="_blank" rel="noreferrer">WhatsApp 7407224410</a>
+            <a href={FACEBOOK} target="_blank" rel="noreferrer">Facebook</a>
+            <a href={INSTAGRAM} target="_blank" rel="noreferrer">Instagram</a>
+            <a href={REVIEW} target="_blank" rel="noreferrer">Google Reviews</a>
           </div>
         </div>
-
         <div className="footer-bottom">
-          <span>
-            © 2026 Bandana's Kitchen. All rights reserved.
-          </span>
-
-          <span>
-            FSSAI License No. 22826034000069
-          </span>
+          <span>© 2026 Bandana's Kitchen. All rights reserved.</span>
+          <span>FSSAI License No. 22826034000069</span>
         </div>
-
-        {/* Subtle creator and artwork credits */}
         <div className="footer-credits">
-          <span>
-            Website by Brishti Maitra &amp; Swarnendu Dutta
-          </span>
-
-          <span className="credit-separator">·</span>
-
+          <span>Website by Brishti Maitra &amp; Swarnendu Dutta</span>
+          <span className="credit-dot">·</span>
           <span>
             Original artwork by{" "}
-            <a
-              href={notSoMightyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              NotSoMighty
-              <ArrowUpRight size={12} />
+            <a href={ARTWORK} target="_blank" rel="noreferrer">
+              NotSoMighty <ArrowUpRight size={12} />
             </a>
           </span>
         </div>
@@ -1074,36 +797,28 @@ function Footer() {
 }
 
 function MobileBottomBar() {
-  const { pathname } = useLocation();
-
   return (
-    <div className="mobile-bottom-bar">
-      <Link
-        to="/menu"
-        className={pathname === "/menu" ? "active" : ""}
-      >
-        <ChefHat size={21} />
-        <span>Menu</span>
-      </Link>
-
-      <a
-        href={whatsappLink(contacts[0].number)}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <MessageCircle size={21} />
-        <span>WhatsApp</span>
+    <nav className="mobile-bottom-bar" aria-label="Quick actions">
+      <Link to="/menu"><ChefHat size={20} /><span>Menu</span></Link>
+      <Link to="/thalis"><Heart size={20} /><span>Thalis</span></Link>
+      <Link to="/combos"><Star size={20} /><span>Combos</span></Link>
+      <a href={wa()} target="_blank" rel="noreferrer">
+        <MessageCircle size={20} /><span>Order</span>
       </a>
+    </nav>
+  );
+}
 
-      <a
-        href={reviewUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <Star size={21} />
-        <span>Review</span>
-      </a>
-    </div>
+function HomePage() {
+  return (
+    <main>
+      <HomeHero />
+      <FeaturedFood />
+      <ExploreWays />
+      <HomeThaliSpotlight />
+      <MeetBandana />
+      <ReviewSection />
+    </main>
   );
 }
 
@@ -1112,15 +827,16 @@ export default function App() {
     <BrowserRouter>
       <ScrollToTop />
       <Header />
-
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/menu" element={<MenuPage />} />
+        <Route path="/thalis" element={<ThaliPage />} />
+        <Route path="/combos" element={<ComboPage />} />
+        <Route path="/cakes-cookies" element={<CakesCookiesPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="*" element={<HomePage />} />
       </Routes>
-
       <Footer />
       <MobileBottomBar />
     </BrowserRouter>
