@@ -24,7 +24,21 @@ const INSTAGRAM = "https://www.instagram.com/bandanaskitchen?igsh=MWV1Nms1b285bn
 const ARTWORK = "https://notsomighty.vercel.app/";
 
 const menuItems = menuData.menuItems ?? [];
-const categoryLabels = menuData.categoryLabels ?? {};
+const categoryLabels = {
+  ...menuData.categoryLabels,
+
+  "Bhaja-Bhuji": "Snacks",
+  "Dimer-Sombhar": "Egg",
+  "Bhaat": "Rice",
+  "China-Town": "Chinese",
+  "Murgir-Bahar": "Chicken",
+  "Mutton-Bahar": "Mutton",
+  "Motso-Mukhi": "Fish",
+  "Niramish Aahar": "Veg",
+  "Bengali-Breads": "Breads",
+  "Biriyani": "Biryani",
+  "Mishti-Mukh": "Desserts",
+};
 
 const foodPhotos = [
   { name: "Prawn Special", image: "prawn.jpg" },
@@ -161,6 +175,7 @@ const links = [
   { to: "/menu", label: "Menu" },
   { to: "/thalis", label: "Thalis" },
   { to: "/combos", label: "Combos" },
+  { to: "/celebrations", label: "Celebrations" },
   { to: "/cakes-cookies", label: "Cakes & Cookies" },
   { to: "/about", label: "Our Story" },
   { to: "/contact", label: "Contact" },
@@ -224,94 +239,129 @@ function SectionTitle({ eyebrow, first, accent, description }) {
   );
 }
 
+
 function HomeHero() {
   return (
-    <section className="home-hero">
-      <div className="container hero-grid">
-        <div className="hero-copy">
-          <span className="eyebrow">A LITTLE KITCHEN. A LOT OF LOVE.</span>
-          <h1>A taste of <em>home,</em> in every bite.</h1>
+    <section className="be-hero">
+      <div className="container be-hero-inner">
+        <div className="be-hero-heading">
+          <span className="be-kicker">
+            BANDANA'S KITCHEN · KOLKATA
+          </span>
+          <h1>
+            Bengali food.
+            <br />
+            <em>Made with love.</em>
+          </h1>
           <p>
-            Authentic homemade Bengali flavours, comforting favourites,
-            and the warmth of a meal made with love.
+            The familiar flavours of home, lovingly prepared
+            for your everyday meals and special moments.
           </p>
-          <div className="hero-actions">
-            <Link className="btn btn-dark" to="/menu">
+          <div className="be-hero-actions">
+            <Link to="/menu" className="be-hero-button">
               Explore the Menu <ArrowUpRight size={18} />
             </Link>
-            <Link className="text-link" to="/thalis">
-              Discover Our Thalis <ArrowRight size={17} />
+            <Link to="/thalis" className="be-hero-text-link">
+              Our Thalis <ArrowRight size={17} />
             </Link>
           </div>
-          <div className="bengali-line">
-            <span lang="bn">ঘরের রান্না, ভালোবাসার ছোঁয়া</span>
-            <small>Home-cooked food, touched with love.</small>
+        </div>
+
+        <div className="be-hero-photos">
+          <div className="be-hero-image be-hero-image-main">
+            <img
+              src="/images/mutton.jpg"
+              alt="Homemade mutton dish from Bandana's Kitchen"
+              fetchPriority="high"
+            />
+            <span>Mutton favourites</span>
+          </div>
+          <div className="be-hero-image be-hero-image-side">
+            <img
+              src="/images/prawn.jpg"
+              alt="Prawn curry from Bandana's Kitchen"
+            />
+            <span>From the Bengali kitchen</span>
+          </div>
+          <div className="be-hero-image be-hero-image-side">
+            <img
+              src="/images/rui_chop.jpg"
+              alt="Rui Chop from Bandana's Kitchen"
+            />
+            <span>Homemade delights</span>
           </div>
         </div>
-        <div className="hero-artwork">
-          <img src="/images/hero.jpg" alt="Bandana's Kitchen original artwork" />
+
+        <div className="be-hero-footnote">
+          <span lang="bn">ঘরের রান্না, ভালোবাসার ছোঁয়া</span>
+          <span>EVERY MEAL, A MEMORY OF HOME.</span>
         </div>
       </div>
     </section>
   );
 }
 
+
 function ExploreWays() {
-  const options = [
+  const collections = [
     {
-      number: "01",
-      eyebrow: "YOUR EVERYDAY CRAVINGS",
-      name: "À La Carte",
-      text: "Explore the full kitchen menu, from comforting classics to Bengali favourites.",
+      title: "À La Carte",
+      subtitle: "Something for every craving.",
       to: "/menu",
-      cta: "View Menu",
-      className: "explore-menu",
-      symbol: "✳",
+      number: "01",
     },
     {
-      number: "02",
-      eyebrow: "A COMPLETE HOMEMADE MEAL",
-      name: "Bengali Thalis",
-      text: "Rice, dal, sides and a delicious main, all together on one plate.",
+      title: "Bengali Thalis",
+      subtitle: "A complete meal, made with care.",
       to: "/thalis",
-      cta: "Explore Thalis",
-      className: "explore-thali",
-      symbol: "✿",
+      number: "02",
     },
     {
-      number: "03",
-      eyebrow: "MORE TO CELEBRATE",
-      name: "Special Combos",
-      text: "Thoughtfully paired dishes for celebrations and special meals.",
+      title: "Special Combos",
+      subtitle: "For the moments worth sharing.",
       to: "/combos",
-      cta: "See Combos",
-      className: "explore-combo",
-      symbol: "❋",
+      number: "03",
+    },
+    {
+      title: "Cakes & Cookies",
+      subtitle: "A little something sweet.",
+      to: "/cakes-cookies",
+      number: "04",
     },
   ];
 
   return (
-    <section className="explore-section">
+    <section className="be-collections">
       <div className="container">
-        <SectionTitle
-          eyebrow="WHAT ARE YOU CRAVING?"
-          first="Find your kind of"
-          accent="comfort."
-          description="Three delicious ways to enjoy Bandana's Kitchen."
-        />
-        <div className="explore-grid">
-          {options.map((option) => (
-            <Link to={option.to} className={`explore-card ${option.className}`} key={option.to}>
-              <div className="explore-card-top">
-                <span>{option.number} / 03</span>
-                <span className="explore-symbol">{option.symbol}</span>
+        <div className="be-section-heading">
+          <span className="be-kicker">EXPLORE OUR KITCHEN</span>
+          <h2>
+            What are you
+            <br />
+            <em>craving today?</em>
+          </h2>
+          <p>
+            From everyday Bengali meals to special treats,
+            find something delicious for every occasion.
+          </p>
+        </div>
+
+        <div className="be-collections-grid">
+          {collections.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="be-collection-card"
+            >
+              <div className="be-collection-top">
+                <span>{item.number} / 04</span>
+                <ArrowUpRight size={22} />
               </div>
-              <div>
-                <span className="explore-eyebrow">{option.eyebrow}</span>
-                <h3>{option.name}</h3>
-                <p>{option.text}</p>
-                <span className="explore-cta">
-                  {option.cta} <ArrowUpRight size={18} />
+              <div className="be-collection-bottom">
+                <h3>{item.title}</h3>
+                <p>{item.subtitle}</p>
+                <span className="be-collection-link">
+                  Explore collection <ArrowRight size={16} />
                 </span>
               </div>
             </Link>
@@ -321,6 +371,42 @@ function ExploreWays() {
     </section>
   );
 }
+
+
+function HomeKitchenStory() {
+  return (
+    <section className="be-story">
+      <div className="container be-story-inner">
+        <div className="be-story-photo">
+          <img
+            src="/images/mother.jpg"
+            alt="Bandana Dutta, the heart behind Bandana's Kitchen"
+            loading="lazy"
+          />
+        </div>
+
+        <div className="be-story-copy">
+          <span className="be-kicker">THE HEART OF OUR KITCHEN</span>
+          <h2>
+            More than food.
+            <br />
+            <em>A feeling of home.</em>
+          </h2>
+          <p>
+            Behind Bandana's Kitchen is a love for homemade
+            cooking and the joy of sharing a good meal.
+            Familiar recipes, thoughtful preparation and
+            a little warmth in every serving.
+          </p>
+          <Link to="/about" className="be-story-link">
+            Meet Bandana <ArrowUpRight size={18} />
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 
 function FeaturedFood() {
   return (
@@ -394,32 +480,6 @@ function HomeThaliSpotlight() {
   );
 }
 
-function MeetBandana() {
-  return (
-    <section className="meet-section">
-      <div className="container meet-grid">
-        <div className="meet-photo">
-          <img src="/images/mother.jpg" alt="Bandana, the heart behind Bandana's Kitchen" loading="lazy" />
-        </div>
-        <div className="meet-copy">
-          <span className="eyebrow">THE HEART BEHIND THE KITCHEN</span>
-          <h2>Meet <em>Bandana.</em></h2>
-          <p>
-            Some meals remind us of family, familiar conversations,
-            and the simple happiness of eating together.
-          </p>
-          <p>
-            That's the feeling Bandana's Kitchen hopes to bring
-            to your table, one homemade meal at a time.
-          </p>
-          <Link className="btn btn-dark" to="/about">
-            Our Story <ArrowUpRight size={18} />
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function ReviewSection() {
   return (
@@ -450,110 +510,500 @@ function PageHero({ eyebrow, title, accent, description }) {
   );
 }
 
+
 function MenuPage() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
+  const [basket, setBasket] = useState({});
+  const [basketOpen, setBasketOpen] = useState(false);
 
-  const groups = useMemo(() => {
-    const result = new Map();
+  const groupedMenu = useMemo(() => {
+    const groups = new Map();
+
     menuItems.forEach((item) => {
       const key = item.category || "Other";
-      if (!result.has(key)) result.set(key, []);
-      result.get(key).push(item);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(item);
     });
-    return result;
+
+    return [...groups.entries()];
   }, []);
 
-  const categories = ["All", ...groups.keys()];
+  const categories = ["All", ...groupedMenu.map(([key]) => key)];
 
-  const visibleGroups = [...groups.entries()]
+  const visibleGroups = groupedMenu
     .filter(([key]) => category === "All" || key === category)
     .map(([key, items]) => [
       key,
       items.filter((item) =>
-        `${item.name} ${key}`.toLowerCase().includes(query.toLowerCase())
+        `${item.name} ${key} ${categoryLabels[key] || ""}`
+          .toLowerCase()
+          .includes(query.trim().toLowerCase())
       ),
     ])
     .filter(([, items]) => items.length > 0);
 
+  const selectedItems = menuItems
+    .filter((item) => (basket[item.id] || 0) > 0)
+    .map((item) => ({
+      ...item,
+      count: basket[item.id],
+    }));
+
+  const itemCount = selectedItems.reduce(
+    (sum, item) => sum + item.count,
+    0
+  );
+
+  const subtotal = selectedItems.reduce(
+    (sum, item) =>
+      sum + (typeof item.price === "number" ? item.price * item.count : 0),
+    0
+  );
+
+  const hasUnpricedItems = selectedItems.some(
+    (item) => typeof item.price !== "number"
+  );
+
+  const formatPrice = (price) =>
+    typeof price === "number" ? `₹${price}` : "Ask for price";
+
+  function changeQuantity(id, difference) {
+    setBasket((previous) => {
+      const next = { ...previous };
+      const quantity = Math.max(0, (next[id] || 0) + difference);
+
+      if (quantity === 0) {
+        delete next[id];
+      } else {
+        next[id] = quantity;
+      }
+
+      return next;
+    });
+  }
+
+  function clearBasket() {
+    setBasket({});
+    setBasketOpen(false);
+  }
+
+  function checkout() {
+    if (!selectedItems.length) return;
+
+    const lines = [
+      "Hello Bandana's Kitchen!",
+      "",
+      "I'd like to enquire about the following order:",
+      "",
+      ...selectedItems.map((item, index) => {
+        const amount =
+          typeof item.price === "number"
+            ? `₹${item.price * item.count}`
+            : "Price to be confirmed";
+
+        return [
+          `${index + 1}. ${item.name}`,
+          `   Portion: ${item.quantity || "Please confirm"}`,
+          `   Quantity: ${item.count}`,
+          `   Amount: ${amount}`,
+        ].join("\n");
+      }),
+      "",
+      `Estimated item subtotal: ₹${subtotal}`,
+      ...(hasUnpricedItems
+        ? ["Some item prices still need confirmation."]
+        : []),
+      "Delivery charges are not included.",
+      "",
+      "Please confirm availability, final price, preparation time and delivery.",
+      "Thank you!",
+    ];
+
+    window.open(
+      wa(lines.join("\n")),
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+
+  useEffect(() => {
+    if (!basketOpen) return;
+
+    function handleEscape(event) {
+      if (event.key === "Escape") setBasketOpen(false);
+    }
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [basketOpen]);
+
   return (
-    <main>
-      <PageHero
-        eyebrow="THE COMPLETE KITCHEN MENU"
-        title="Made for your"
-        accent="cravings."
-        description="Explore homemade favourites, find your dish, and order directly on WhatsApp."
-      />
-      <div className="container menu-layout">
-        <div className="menu-toolbar">
-          <label className="search-field">
-            <Search size={19} />
+    <main className="menu-redesign">
+      {/* Editorial hero */}
+      <section className="menu-new-hero">
+        <div className="container menu-new-hero-inner">
+          <div className="menu-new-hero-copy">
+            <span className="menu-new-eyebrow">
+              ✳ FRESH FROM BANDANA'S KITCHEN
+            </span>
+
+            <h1>
+              The good food
+              <br />
+              <em>diaries.</em>
+            </h1>
+
+            <p>
+              A little Bengali nostalgia, a lot of homemade goodness.
+              From everyday comfort food to something special —
+              there's always something lovely cooking.
+            </p>
+
+            <div className="menu-hero-details">
+              <span>♡ Homemade with love</span>
+              <span>✳ Bengali favourites & more</span>
+            </div>
+          </div>
+
+          <div className="menu-hero-art" aria-hidden="true">
+            <span className="menu-art-star">✳</span>
+            <div className="menu-art-circle">
+              <span>ঘরের রান্না</span>
+              <strong>GOOD FOOD</strong>
+              <em>GOOD MOOD</em>
+              <small>EVERY MEAL, A MEMORY OF HOME</small>
+            </div>
+            <span className="menu-art-flower">✿</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="container menu-new-content">
+        {/* Search and category navigation */}
+        <div className="menu-discovery">
+          <div className="menu-discovery-heading">
+            <div>
+              <span className="eyebrow">WHAT ARE YOU CRAVING?</span>
+              <h2>Explore our <em>kitchen.</em></h2>
+            </div>
+            <span className="menu-total-count">
+              {menuItems.length} homemade favourites
+            </span>
+          </div>
+
+          <div className="menu-search-box">
+            <Search size={21} aria-hidden="true" />
             <input
+              type="search"
+              aria-label="Search dishes"
+              placeholder="Search for your favourite dish..."
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="What are you craving?"
-              type="search"
             />
-          </label>
-          <div className="category-tabs">
-            {categories.map((key) => (
+            {query && (
               <button
                 type="button"
+                className="menu-search-clear"
+                aria-label="Clear search"
+                onClick={() => setQuery("")}
+              >
+                <X size={18} />
+              </button>
+            )}
+          </div>
+
+          <div className="menu-category-scroll" aria-label="Menu categories">
+            {categories.map((key) => (
+              <button
                 key={key}
-                className={category === key ? "selected" : ""}
+                type="button"
+                className={`menu-category-pill ${
+                  category === key ? "is-active" : ""
+                }`}
+                aria-pressed={category === key}
                 onClick={() => setCategory(key)}
               >
-                {key === "All" ? "All Dishes" : categoryLabels[key] || key}
+                {key === "All"
+                  ? "✳ All Dishes"
+                  : categoryLabels[key] || key}
               </button>
             ))}
           </div>
+
+          <div className="menu-discovery-note">
+            <span>✿</span>
+            <p>
+              Choose your favourites, add them to your basket,
+              and send everything in one WhatsApp message.
+            </p>
+          </div>
         </div>
 
-        {visibleGroups.length ? (
-          visibleGroups.map(([key, items], groupIndex) => (
-            <section className="menu-group" key={key}>
-              <div className="menu-group-heading">
-                <div>
-                  <span className="eyebrow">FROM OUR KITCHEN · {String(groupIndex + 1).padStart(2, "0")}</span>
-                  <h2>{categoryLabels[key] || key}</h2>
+        {/* Food categories */}
+        <div className="menu-new-groups">
+          {visibleGroups.length ? (
+            visibleGroups.map(([key, items], groupIndex) => (
+              <section className="menu-new-group" key={key}>
+                <div className="menu-new-group-heading">
+                  <div>
+                    <span className="menu-group-number">
+                      FROM OUR KITCHEN ·
+                      {" "}
+                      {String(groupIndex + 1).padStart(2, "0")}
+                    </span>
+                    <h2>{categoryLabels[key] || key}<em> ✳</em></h2>
+                  </div>
+                  <span className="menu-group-count">
+                    {items.length} {items.length === 1 ? "dish" : "dishes"}
+                  </span>
                 </div>
-                <span>{items.length} dishes</span>
+
+                <div className="menu-new-grid">
+                  {items.map((item) => {
+                    const count = basket[item.id] || 0;
+
+                    return (
+                      <article className="menu-new-card" key={item.id}>
+                        <div className="menu-new-card-top">
+                          
+<div className="menu-new-card-copy">
+  <h3>
+    {item.name}
+    {item.englishName && (
+      <span className="menu-english-name">
+        ({item.englishName})
+      </span>
+    )}
+  </h3>
+
+  <p>
+    {item.quantity || "Portion on enquiry"}
+  </p>
+</div>
+
+
+                          <strong className="menu-new-price">
+                            {formatPrice(item.price)}
+                          </strong>
+                        </div>
+
+                        <div className="menu-new-card-bottom">
+                          <span className="menu-homemade-tag">
+                            ♡ From our kitchen
+                          </span>
+
+                          {count === 0 ? (
+                            <button
+                              type="button"
+                              className="menu-add-button"
+                              onClick={() => changeQuantity(item.id, 1)}
+                              aria-label={`Add ${item.name} to basket`}
+                            >
+                              <span aria-hidden="true">+</span> Add
+                            </button>
+                          ) : (
+                            <div
+                              className="menu-quantity"
+                              aria-label={`${item.name} quantity`}
+                            >
+                              <button
+                                type="button"
+                                onClick={() => changeQuantity(item.id, -1)}
+                                aria-label={`Remove one ${item.name}`}
+                              >
+                                −
+                              </button>
+                              <span aria-live="polite">{count}</span>
+                              <button
+                                type="button"
+                                onClick={() => changeQuantity(item.id, 1)}
+                                aria-label={`Add one ${item.name}`}
+                              >
+                                +
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+            ))
+          ) : (
+            <div className="menu-new-empty">
+              <span aria-hidden="true">✿</span>
+              <h2>Nothing cooking by that name!</h2>
+              <p>Try another search or explore the full menu.</p>
+              <button
+                type="button"
+                className="btn btn-dark"
+                onClick={() => {
+                  setQuery("");
+                  setCategory("All");
+                }}
+              >
+                Show All Dishes
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="menu-new-footer-note">
+          <div>
+            <span className="eyebrow">MORE TO EXPLORE</span>
+            <h2>Still feeling <em>hungry?</em></h2>
+            <p>
+              Discover our complete Bengali thalis and
+              thoughtfully curated special combos.
+            </p>
+          </div>
+          <div className="menu-new-footer-links">
+            <Link to="/thalis">
+              Explore Thalis <ArrowUpRight size={17} />
+            </Link>
+            <Link to="/combos">
+              Explore Combos <ArrowUpRight size={17} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Floating basket */}
+      {itemCount > 0 && (
+        <div className="menu-floating-basket">
+          <div className="menu-floating-basket-inner">
+            <div className="menu-floating-summary">
+              <span className="menu-basket-count">{itemCount}</span>
+              <div>
+                <strong>Your little food basket ♡</strong>
+                <small>
+                  {itemCount} {itemCount === 1 ? "item" : "items"}
+                  {" · "}
+                  ₹{subtotal}
+                  {hasUnpricedItems ? " + price to confirm" : ""}
+                </small>
               </div>
-              <div className="menu-items-grid">
-                {items.map((item, index) => (
-                  <article className="menu-dish" key={item.id ?? `${key}-${item.name}-${index}`}>
-                    <div className="menu-dish-main">
-                      <h3>{item.name}</h3>
-                      {item.quantity && <p>{item.quantity}</p>}
-                    </div>
-                    <div className="menu-dish-bottom">
-                      <strong>
-                        {item.price !== undefined && item.price !== null && item.price !== ""
-                          ? `₹${item.price}`
-                          : "Ask for price"}
-                      </strong>
-                      <OrderButton name={item.name} />
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-          ))
-        ) : (
-          <div className="empty-state">
-            <h2>No dishes found</h2>
-            <p>Try another search or category.</p>
-            <button onClick={() => { setQuery(""); setCategory("All"); }}>
-              Show All Dishes
+            </div>
+            <button
+              type="button"
+              onClick={() => setBasketOpen(true)}
+            >
+              View Order <ArrowRight size={17} />
             </button>
           </div>
-        )}
-        <div className="menu-end-note">
-          Looking for a complete meal or a special spread?
-          <Link to="/thalis">Explore Thalis <ArrowRight size={16} /></Link>
-          <Link to="/combos">Explore Combos <ArrowRight size={16} /></Link>
         </div>
-      </div>
+      )}
+
+      {/* Basket drawer */}
+      {basketOpen && (
+        <div className="menu-basket-overlay" onMouseDown={(event) => {
+          if (event.target === event.currentTarget) {
+            setBasketOpen(false);
+          }
+        }}>
+          <aside
+            className="menu-basket-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="menu-basket-title"
+          >
+            <div className="menu-basket-heading">
+              <div>
+                <span className="eyebrow">MADE WITH LOVE ♡</span>
+                <h2 id="menu-basket-title">Your food <em>basket.</em></h2>
+              </div>
+              <button
+                type="button"
+                className="menu-basket-close"
+                aria-label="Close basket"
+                onClick={() => setBasketOpen(false)}
+              >
+                <X size={22} />
+              </button>
+            </div>
+
+            <div className="menu-basket-list">
+              {selectedItems.length ? (
+                selectedItems.map((item) => (
+                  <div className="menu-basket-item" key={item.id}>
+                    <div className="menu-basket-item-details">
+                      <strong>{item.name}</strong>
+                      <small>
+                        {item.quantity || "Portion on enquiry"}
+                      </small>
+                      <span>
+                        {typeof item.price === "number"
+                          ? `₹${item.price * item.count}`
+                          : "Price to confirm"}
+                      </span>
+                    </div>
+
+                    <div className="menu-quantity">
+                      <button
+                        type="button"
+                        onClick={() => changeQuantity(item.id, -1)}
+                        aria-label={`Remove one ${item.name}`}
+                      >
+                        −
+                      </button>
+                      <span>{item.count}</span>
+                      <button
+                        type="button"
+                        onClick={() => changeQuantity(item.id, 1)}
+                        aria-label={`Add one ${item.name}`}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p>Your basket is empty.</p>
+              )}
+            </div>
+
+            <div className="menu-basket-checkout">
+              <div className="menu-basket-total">
+                <span>Estimated subtotal</span>
+                <strong>₹{subtotal}</strong>
+              </div>
+
+              {hasUnpricedItems && (
+                <p className="menu-price-warning">
+                  Some items need price confirmation.
+                </p>
+              )}
+
+              <p className="menu-basket-disclaimer">
+                Final pricing, availability and delivery charges
+                will be confirmed on WhatsApp.
+              </p>
+
+              <button
+                type="button"
+                className="menu-whatsapp-checkout"
+                disabled={!selectedItems.length}
+                onClick={checkout}
+              >
+                <MessageCircle size={19} />
+                Send Order on WhatsApp
+                <ArrowUpRight size={17} />
+              </button>
+
+              <button
+                type="button"
+                className="menu-clear-basket"
+                onClick={clearBasket}
+                disabled={!selectedItems.length}
+              >
+                Clear Basket
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
     </main>
   );
 }
@@ -642,6 +1092,193 @@ function ComboPage() {
     </main>
   );
 }
+
+
+function CelebrationsPage() {
+  const [occasion, setOccasion] = useState("House Party");
+  const [guests, setGuests] = useState("40–50");
+  const [date, setDate] = useState("");
+  const [requirements, setRequirements] = useState("");
+
+  const occasions = [
+    { icon: "✳", name: "House Party", detail: "Good food for good company." },
+    { icon: "✿", name: "Puja", detail: "Traditional flavours for meaningful moments." },
+    { icon: "♡", name: "Family Gathering", detail: "Bring everyone together around a meal." },
+    { icon: "✦", name: "Other Occasion", detail: "Every celebration deserves something special." },
+  ];
+
+  const message = [
+    "Hello Bandana's Kitchen!",
+    "",
+    "I'd like to enquire about a bulk food order.",
+    `Occasion: ${occasion}`,
+    `Expected guests: ${guests}`,
+    `Event date: ${date || "To be confirmed"}`,
+    `Food requirements: ${requirements || "Please share available options"}`,
+    "",
+    "Please let me know about menu options, pricing and availability.",
+  ].join("\n");
+
+  return (
+    <main className="celebrations-page">
+      <section className="celebrations-hero">
+        <div className="container celebrations-hero-inner">
+          <div className="celebrations-intro">
+            <span className="eyebrow">BANDANA'S KITCHEN · SPECIAL OCCASIONS</span>
+            <h1>
+              You bring the people.
+              <br />
+              <em>We'll bring the food.</em>
+            </h1>
+            <p>
+              A house party, a puja, a family get-together or a
+              celebration close to your heart — make the day
+              memorable with the warmth of homemade food.
+            </p>
+            <div className="celebrations-actions">
+              <a className="btn btn-dark" href="#bulk-enquiry">
+                Plan Your Gathering <ArrowRight size={18} />
+              </a>
+              <Link className="text-link" to="/menu">
+                Explore Our Menu <ArrowUpRight size={17} />
+              </Link>
+            </div>
+          </div>
+
+          <div className="celebrations-art" aria-label="Bulk food arrangements for 40 to 50 guests">
+            <div className="celebrations-stamp">MADE WITH LOVE ✳</div>
+            <span className="celebrations-art-small">GOOD FOOD · GOOD COMPANY</span>
+            <strong>40–50</strong>
+            <span className="celebrations-art-guests">GUESTS</span>
+            <p>One beautiful gathering.<br />Many happy plates.</p>
+            <span className="celebrations-art-flower" aria-hidden="true">✿</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="container celebrations-occasions">
+        <div className="celebrations-section-heading">
+          <span className="eyebrow">EVERY OCCASION IS SPECIAL</span>
+          <h2>More memories. <em>Less kitchen work.</em></h2>
+          <p>
+            Whether it's an intimate celebration or a gathering
+            of around 40–50 people, tell us what you have in mind.
+          </p>
+        </div>
+
+        <div className="occasion-grid">
+          {occasions.map((item) => (
+            <button
+              type="button"
+              key={item.name}
+              className={`occasion-card ${occasion === item.name ? "occasion-selected" : ""}`}
+              onClick={() => {
+                setOccasion(item.name);
+                document.getElementById("bulk-enquiry")?.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }}
+            >
+              <span className="occasion-symbol" aria-hidden="true">{item.icon}</span>
+              <strong>{item.name}</strong>
+              <span>{item.detail}</span>
+              <span className="occasion-arrow"><ArrowUpRight size={18} /></span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="celebrations-message">
+        <div className="container celebrations-message-inner">
+          <span className="eyebrow">FROM OUR HOME TO YOUR CELEBRATION</span>
+          <h2>Let the conversations flow. <em>We'll take care of the food.</em></h2>
+          <p>
+            From comforting Bengali favourites to thoughtfully
+            planned meals, we would love to discuss the food
+            for your special day.
+          </p>
+          <span lang="bn">ঘরের রান্না, ভালোবাসার ছোঁয়া</span>
+        </div>
+      </section>
+
+      <section className="container celebrations-enquiry" id="bulk-enquiry">
+        <div className="enquiry-copy">
+          <span className="eyebrow">LET'S PLAN SOMETHING LOVELY</span>
+          <h2>Tell us about <em>your day.</em></h2>
+          <p>
+            Share a few details and we'll continue the conversation
+            on WhatsApp. Menu, pricing, preparation and delivery
+            will be confirmed directly with our kitchen.
+          </p>
+          <div className="enquiry-note">
+            <MessageCircle size={22} />
+            <div>
+              <strong>Prefer to talk directly?</strong>
+              <span>WhatsApp us at 7407224410</span>
+            </div>
+          </div>
+        </div>
+
+        <form
+          className="bulk-form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            window.open(wa(message), "_blank", "noopener,noreferrer");
+          }}
+        >
+          <label>
+            What's the occasion?
+            <select value={occasion} onChange={(e) => setOccasion(e.target.value)}>
+              {occasions.map((item) => (
+                <option key={item.name} value={item.name}>{item.name}</option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Expected number of guests
+            <input
+              value={guests}
+              onChange={(e) => setGuests(e.target.value)}
+              placeholder="e.g. 45"
+              required
+            />
+          </label>
+
+          <label>
+            Event date (if decided)
+            <input
+              type="date"
+              value={date}
+              min={new Date().toLocaleDateString("en-CA")}
+              onChange={(e) => setDate(e.target.value)}
+            />
+          </label>
+
+          <label>
+            Tell us about your food preferences
+            <textarea
+              rows={5}
+              value={requirements}
+              onChange={(e) => setRequirements(e.target.value)}
+              placeholder="Veg or non-veg, lunch or dinner, preferred dishes, location, or anything you'd like us to know..."
+            />
+          </label>
+
+          <button type="submit" className="btn btn-dark bulk-submit">
+            Send Enquiry on WhatsApp <ArrowUpRight size={18} />
+          </button>
+
+          <small>
+            This sends an enquiry, not a confirmed booking.
+            Availability and final pricing will be discussed with you.
+          </small>
+        </form>
+      </section>
+    </main>
+  );
+}
+
 
 
 function CakesCookiesPage() {
@@ -799,28 +1436,75 @@ function Footer() {
 function MobileBottomBar() {
   return (
     <nav className="mobile-bottom-bar" aria-label="Quick actions">
-      <Link to="/menu"><ChefHat size={20} /><span>Menu</span></Link>
-      <Link to="/thalis"><Heart size={20} /><span>Thalis</span></Link>
-      <Link to="/combos"><Star size={20} /><span>Combos</span></Link>
+      <NavLink to="/" end>
+        <Heart size={20} />
+        <span>Home</span>
+      </NavLink>
+      <NavLink to="/menu">
+        <ChefHat size={20} />
+        <span>Menu</span>
+      </NavLink>
+      <NavLink to="/celebrations">
+        <Star size={20} />
+        <span>Events</span>
+      </NavLink>
       <a href={wa()} target="_blank" rel="noreferrer">
-        <MessageCircle size={20} /><span>Order</span>
+        <MessageCircle size={20} />
+        <span>Order</span>
       </a>
     </nav>
   );
 }
 
+
+function CelebrationsSpotlight() {
+  return (
+    <section className="bulk-home-section">
+      <div className="container bulk-home-inner">
+        <div className="bulk-home-copy">
+          <span className="eyebrow">PLANNING SOMETHING SPECIAL?</span>
+          <h2>
+            A house full of people.
+            <br />
+            <em>A table full of love.</em>
+          </h2>
+          <p>
+            House parties, pujas, family gatherings and special
+            occasions — let Bandana's Kitchen help you plan
+            food for around 40–50 guests.
+          </p>
+          <Link to="/celebrations" className="btn btn-dark">
+            Explore Bulk Orders <ArrowUpRight size={18} />
+          </Link>
+        </div>
+
+        <div className="bulk-home-visual">
+          <span className="bulk-home-sparkle" aria-hidden="true">✳</span>
+          <span className="bulk-home-small">GATHER. CELEBRATE. EAT.</span>
+          <strong>40–50</strong>
+          <span className="bulk-home-guests">PEOPLE</span>
+          <span className="bulk-home-tag">Food made with love ♡</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+
 function HomePage() {
   return (
-    <main>
+    <main className="be-homepage">
       <HomeHero />
       <FeaturedFood />
       <ExploreWays />
       <HomeThaliSpotlight />
-      <MeetBandana />
+      <HomeKitchenStory />
       <ReviewSection />
     </main>
   );
 }
+
 
 export default function App() {
   return (
@@ -832,6 +1516,7 @@ export default function App() {
         <Route path="/menu" element={<MenuPage />} />
         <Route path="/thalis" element={<ThaliPage />} />
         <Route path="/combos" element={<ComboPage />} />
+        <Route path="/celebrations" element={<CelebrationsPage />} />
         <Route path="/cakes-cookies" element={<CakesCookiesPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
